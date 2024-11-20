@@ -97,26 +97,6 @@ const AppointmentForm = () => {
     }
   }, [selectMedic]);
 
-  //Handle form submission
-  // const onSubmit = async () => {
-  //   try {
-  //     const response = await axios.post(`${API}/citas`, {
-  //       estado: "",
-  //       id_user: "",
-  //       id_rt: selectTurno.value,
-  //     });
-
-  //     alert("Cita registrada");
-  //     reset();
-  //     setSelectEspeciality(null);
-  //     setSelectMedic(null);
-  //     setSelectTurno(null);
-  //   } catch (error) {
-  //     console.log("Error al registrar la cita", error);
-  //     alert("Error al registar la cita");
-  //   }
-  // };
-
   const onSubmit = async () => {
 
     let contador = 0
@@ -158,8 +138,6 @@ const AppointmentForm = () => {
       alert("Error al registrar la cita")
     }
   }
-
-
 
   return (
     <div className="container mx-auto p-4">
