@@ -79,7 +79,8 @@ const AppointmentForm = () => {
                 minute: "2-digit",
                 hour12: false,
               });
-    
+              const idTurno = turn.id_rt
+              console.log(idTurno)
               // Retornar los datos formateados
               return {
                 value: turn.id_rt,
@@ -96,25 +97,69 @@ const AppointmentForm = () => {
     }
   }, [selectMedic]);
 
-  // Handle form submission
-  const onSubmit = async () => {
-    try {
-      const response = await axios.post(`${API}/citas`, {
-        estado: "",
-        id_user: "",
-        id_rt: selectTurno.value,
-      });
+  //Handle form submission
+  // const onSubmit = async () => {
+  //   try {
+  //     const response = await axios.post(`${API}/citas`, {
+  //       estado: "",
+  //       id_user: "",
+  //       id_rt: selectTurno.value,
+  //     });
 
-      alert("Cita registrada");
-      reset();
-      setSelectEspeciality(null);
-      setSelectMedic(null);
-      setSelectTurno(null);
+  //     alert("Cita registrada");
+  //     reset();
+  //     setSelectEspeciality(null);
+  //     setSelectMedic(null);
+  //     setSelectTurno(null);
+  //   } catch (error) {
+  //     console.log("Error al registrar la cita", error);
+  //     alert("Error al registar la cita");
+  //   }
+  // };
+
+  const onSubmit = async () => {
+
+    let contador = 0
+    try {
+      // Obtener información del turno seleccionado
+      const turnoResponse = await axios.get(`${API}/turno/${selectTurno.value}`)
+      const turnoData = turnoResponse.data
+      let estado = "Rechazado"
+
+      // Validación de numero de pacientes en ese horario
+      if (turnoData.num_pacientes > 0){
+        estado = "Aprobado"
+
+        // Actualizar numero de pacientes
+        await axios.put(`${API}/turno/${selectTurno.value}`, {
+          num_pacientes: turnoData.num_pacientes - 1,
+          id_medico: turnoData.id_medico,
+          id_horario: turnoData.id_horario,
+        })
+
+        contador++
+      }
+
+      console.log(contador)
+      // Registrar cita
+      const response = await axios.post(`${API}/citas`, {
+        estado: estado,
+        id_user: 6,
+        id_rt: selectTurno.value,
+      })
+
+      alert(`Cita registrada con estado: ${estado}`)
+      reset()
+      setSelectEspeciality(null)
+      setSelectMedic(null)
+      setSelectTurno(null)
     } catch (error) {
-      console.log("Error al registrar la cita", error);
-      alert("Error al registar la cita");
+      console.error("Error al registrar la cita: ",error)
+      alert("Error al registrar la cita")
     }
-  };
+  }
+
+
 
   return (
     <div className="container mx-auto p-4">
